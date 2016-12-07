@@ -1,11 +1,7 @@
 package com.progwebavanzada.entidades;
 
-import com.vaadin.spring.annotation.UIScope;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,11 +17,17 @@ public class Usuario {
     private String nombre;
     private String apellido;
     private String cedula;
-    @OneToMany(mappedBy = "usuario")
+
+    @OneToMany(mappedBy = "usuario",fetch= FetchType.EAGER)
     private List<Rol> roles;
+
     private boolean consumidorFinal;
 
-    public Usuario(){}
+    @Transient
+    private List<String> nombreRoles;
+
+    public Usuario(){
+        setNombreRoles(new ArrayList<>());}
 
     public int getId() {
         return id;
@@ -89,5 +91,13 @@ public class Usuario {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public List<String> getNombreRoles() {
+        return nombreRoles;
+    }
+
+    public void setNombreRoles(List<String> nombreRoles) {
+        this.nombreRoles = nombreRoles;
     }
 }

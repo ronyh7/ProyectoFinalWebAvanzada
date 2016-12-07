@@ -1,9 +1,6 @@
 package com.progwebavanzada.entidades;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Created by rony- on 12/6/2016.
@@ -14,6 +11,7 @@ public class Rol {
     @GeneratedValue
     private int id;
     private String rol;
+
     @ManyToOne
     private Usuario usuario;
 
