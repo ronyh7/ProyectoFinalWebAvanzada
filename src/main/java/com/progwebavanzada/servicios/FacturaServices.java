@@ -1,5 +1,6 @@
 package com.progwebavanzada.servicios;
 
+import com.progwebavanzada.entidades.Compra;
 import com.progwebavanzada.entidades.Factura;
 import com.progwebavanzada.repositorios.FacturaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,12 @@ public class FacturaServices {
 
     public void borrarFactura(Factura factura){
         facturaRepository.delete(factura);
+    }
+
+    public Factura facturaID(int id){
+        return facturaRepository.id(id);
+    }
+    public List<Compra> mercancias(Factura factura){
+        return facturaRepository.mercancias(factura);
     }
 }

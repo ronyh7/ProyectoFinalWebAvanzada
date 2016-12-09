@@ -14,7 +14,7 @@ import com.vaadin.event.SelectionEvent;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
-import org.jfree.ui.Spinner;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;

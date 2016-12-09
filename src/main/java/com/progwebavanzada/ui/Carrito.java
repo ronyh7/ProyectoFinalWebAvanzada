@@ -89,18 +89,21 @@ public class Carrito extends UI {
                     nuevaFactura.setCliente(usuario);
                     nuevaFactura.setFecha(new Date());
                     facturaServices.crearFactura(nuevaFactura);
+                    float total=1;
                     for(int i=0; i<compras.size();i++){
                         compras.get(i).setFactura(nuevaFactura);
+                        total+= compras.get(i).getCantidad()*compras.get(i).getMercancia().getPrecio();
                         compraServices.crearCompra(compras.get(i));
                     }
-
+                    nuevaFactura.setTotal(total);
+                    facturaServices.crearFactura(nuevaFactura);
                     Factura facturavieja= usuario.getCarritoActual();
                     usuario.setCarritoActual(null);
                     usuarioServices.crearUsuario(usuario);
                     getSession().setAttribute("usuario",usuario);
                     facturaServices.borrarFactura(facturavieja);
 
-                    getUI().getPage().setLocation("http://localhost:8080/indice");
+                    getUI().getPage().setLocation("http://localhost:8080/report?id="+nuevaFactura.getId());
                 }
             }
         });

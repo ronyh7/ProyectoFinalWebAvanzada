@@ -1,12 +1,13 @@
 package com.progwebavanzada.entidades;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by rony- on 12/8/2016.
  */
 @Entity
-public class Compra {
+public class Compra implements Serializable{
     @Id
     @GeneratedValue
     private int id;
@@ -47,5 +48,10 @@ public class Compra {
 
     public void setFactura(Factura factura) {
         this.factura = factura;
+    }
+
+    @Override
+    public String toString(){
+        return this.getId()+","+this.getMercancia()+","+this.getCantidad()+","+this.factura.getId();
     }
 }

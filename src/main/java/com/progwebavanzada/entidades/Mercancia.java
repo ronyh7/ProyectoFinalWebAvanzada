@@ -3,17 +3,19 @@ package com.progwebavanzada.entidades;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * Created by rony- on 12/6/2016.
  */
 @Entity
-public class Mercancia {
+public class Mercancia implements Serializable {
     @Id
     @GeneratedValue
     private int id;
     private String nombre;
     private String descripcion;
+    private float precio;
     private int cantidad;
     private String rutaImagen;
 
@@ -62,5 +64,13 @@ public class Mercancia {
     @Override
     public String toString(){
         return this.getNombre();
+    }
+
+    public float getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(float precio) {
+        this.precio = precio;
     }
 }

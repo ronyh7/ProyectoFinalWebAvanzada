@@ -1,12 +1,13 @@
 package com.progwebavanzada.entidades;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Created by rony- on 12/6/2016.
  */
 @Entity
-public class Rol {
+public class Rol implements Serializable {
     @Id
     @GeneratedValue
     private int id;

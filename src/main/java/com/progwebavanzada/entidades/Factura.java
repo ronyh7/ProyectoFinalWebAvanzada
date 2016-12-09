@@ -1,6 +1,7 @@
 package com.progwebavanzada.entidades;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
  * Created by rony- on 12/8/2016.
  */
 @Entity
-public class Factura {
+public class Factura implements Serializable {
     @Id
     @GeneratedValue
     private int id;
@@ -20,6 +21,8 @@ public class Factura {
     private Date Fecha;
 
     private boolean facturada;
+
+    private float total;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "factura")
     private List<Compra> mercancias;
@@ -68,5 +71,13 @@ public class Factura {
 
     public void setFacturada(boolean facturada) {
         this.facturada = facturada;
+    }
+
+    public float getTotal() {
+        return total;
+    }
+
+    public void setTotal(float total) {
+        this.total = total;
     }
 }
