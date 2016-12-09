@@ -34,6 +34,10 @@ public class UsuarioServices
         return usuarioRepository.id(id);
     }
 
+    public Usuario usuarioCorreo(String correo){
+        return usuarioRepository.correo(correo);
+    }
+
     @Transactional
     public void borrarUsuario(Usuario usuario){
         for(int i=0;i<usuario.getRoles().size();i++){

@@ -40,15 +40,7 @@ public class ListaUsuario extends UI {
 
         BeanItemContainer<Usuario> container =
                 new BeanItemContainer<Usuario>(Usuario.class, usuarios);
-
-        for(int i=0; i< container.size();i++){
-            for(int j=0 ; j<container.getIdByIndex(i).getRoles().size();j++){
-                Usuario usuario = container.getIdByIndex(i);
-                usuario.getNombreRoles().add(usuario.getRoles().get(j).getRol());
-            }
-        }
         Grid grid = new Grid(container);
-        grid.removeColumn("roles");
         grid.setWidth("100%");
 
 

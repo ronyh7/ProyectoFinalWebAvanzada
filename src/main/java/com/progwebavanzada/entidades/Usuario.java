@@ -1,5 +1,8 @@
 package com.progwebavanzada.entidades;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,16 +21,19 @@ public class Usuario {
     private String apellido;
     private String cedula;
 
+    @Fetch(FetchMode.SELECT)
     @OneToMany(mappedBy = "usuario",fetch= FetchType.EAGER)
     private List<Rol> roles;
 
+    @Fetch(FetchMode.SELECT)
+    @OneToMany(mappedBy = "cliente",fetch = FetchType.EAGER)
+    private List<Factura> facturas;
+
     private boolean consumidorFinal;
 
-    @Transient
-    private List<String> nombreRoles;
+    @OneToOne
+    private Factura carritoActual;
 
-    public Usuario(){
-        setNombreRoles(new ArrayList<>());}
 
     public int getId() {
         return id;
@@ -93,11 +99,19 @@ public class Usuario {
         this.correo = correo;
     }
 
-    public List<String> getNombreRoles() {
-        return nombreRoles;
+    public List<Factura> getFacturas() {
+        return facturas;
     }
 
-    public void setNombreRoles(List<String> nombreRoles) {
-        this.nombreRoles = nombreRoles;
+    public void setCarritos(List<Factura> facturas) {
+        this.facturas = facturas;
+    }
+
+    public Factura getCarritoActual() {
+        return carritoActual;
+    }
+
+    public void setCarritoActual(Factura carritoActual) {
+        this.carritoActual = carritoActual;
     }
 }
