@@ -43,7 +43,10 @@ public class ListaUsuario extends UI {
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+            if(!usuarioLogueado.isAdmin())
+                getUI().getPage().setLocation("http://localhost:8080/indice");
         }
+
         Collection<Usuario> usuarios = usuarioServices.allUsuarios();
 
         BeanItemContainer<Usuario> container =

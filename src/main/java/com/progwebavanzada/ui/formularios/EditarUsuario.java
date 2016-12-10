@@ -45,6 +45,8 @@ public class EditarUsuario extends UI {
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+            if(!usuarioLogueado.isAdmin())
+                getUI().getPage().setLocation("http://localhost:8080/indice");
         }
         usuarioID=Integer.parseInt(vaadinRequest.getParameter("id"));
         Usuario usuario = usuarioServices.usuarioID(usuarioID);

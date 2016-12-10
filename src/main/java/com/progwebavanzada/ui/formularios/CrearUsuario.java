@@ -41,7 +41,6 @@ public class CrearUsuario extends UI {
     private TextField apellido= new TextField("Apellido");
     private CheckBox consumidorFinal = new CheckBox("Consumidor Final?");
     private Button  guardar =new Button("Guardar");
-    private Button clienteNotificacion = new Button("Enviar Detalles Al Nuevo Cliente");
 
 
 
@@ -53,6 +52,8 @@ public class CrearUsuario extends UI {
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+            if(!usuarioLogueado.isAdmin() || !usuarioLogueado.isVentas())
+                getUI().getPage().setLocation("http://localhost:8080/indice");
         }
         correo.addValidator(new EmailValidator("Debe ser un Email valido"));
 
@@ -90,12 +91,6 @@ public class CrearUsuario extends UI {
                     }
                 }
                 getUI().getPage().setLocation("http://localhost:8080/indice");
-
-            }
-        });
-        clienteNotificacion.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
 
             }
         });

@@ -3,6 +3,7 @@ package com.progwebavanzada.ui;
 import com.progwebavanzada.entidades.Usuario;
 import com.vaadin.navigator.View;
 import com.vaadin.spring.annotation.UIScope;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -71,6 +72,14 @@ public class Menu extends VerticalLayout {
             }
         };
 
+        MenuBar.Command logoutC = new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getSession().setAttribute("usuario",null);
+                getUI().getPage().setLocation("http://localhost:8080/login");
+            }
+        };
+
         MenuBar.MenuItem bienvenido = menuBar.addItem("Bienvenido",home);
 
         MenuBar.MenuItem usuario = menuBar.addItem("Usuario", null);
@@ -84,6 +93,8 @@ public class Menu extends VerticalLayout {
         MenuBar.MenuItem listaMercancia = mercancias.addItem("Lista de Mercancias",listaMercanciaC);
 
         MenuBar.MenuItem carrito = menuBar.addItem("Carrito",carritoC);
+
+        MenuBar.MenuItem logout = menuBar.addItem("Cerrar Sesion",logoutC);
 
         addComponent(menuBar);
 

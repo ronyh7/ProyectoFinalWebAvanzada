@@ -34,32 +34,38 @@ public class EditarCliente extends UI{
     @Override
     protected void init(VaadinRequest vaadinRequest){
         menu.setPagina(this);
+        boolean usuarioExiste=false;
         if(getSession().getAttribute("usuario")==null){
             getUI().getPage().setLocation("http://localhost:8080/login");
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+            usuarioExiste=true;
         }
-        correo.setValue(usuarioLogueado.getCorreo());
-        password.setValue(usuarioLogueado.getPassword());
-        nombre.setValue(usuarioLogueado.getNombre());
-        apellido.setValue(usuarioLogueado.getApellido());
+        if(usuarioExiste) {
+            correo.setValue(usuarioLogueado.getCorreo());
+            password.setValue(usuarioLogueado.getPassword());
+            nombre.setValue(usuarioLogueado.getNombre());
+            apellido.setValue(usuarioLogueado.getApellido());
 
-        guardar.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                Usuario usuario = new Usuario();
-                usuario.setId(usuarioLogueado.getId());
-                usuario.setCorreo(correo.getValue());
-                usuario.setPassword(password.getValue());
-                usuario.setNombre(nombre.getValue());
-                usuario.setApellido(apellido.getValue());
-                usuarioServices.crearUsuario(usuario);
-                getUI().getPage().setLocation("http://localhost:8080/indice");
-            }
-        });
-        menu.addComponents(correo,password,nombre,apellido);
-        menu.addComponent(guardar);
-        setContent(menu);
+            guardar.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    Usuario usuario = new Usuario();
+                    usuario.setId(usuarioLogueado.getId());
+                    usuario.setCorreo(correo.getValue());
+                    usuario.setPassword(password.getValue());
+                    usuario.setCedula(usuarioLogueado.getCedula());
+                    usuario.setNombre(nombre.getValue());
+                    usuario.setApellido(apellido.getValue());
+                    usuario.setConsumidorFinal(usuarioLogueado.isConsumidorFinal());
+                    usuarioServices.crearUsuario(usuario);
+                    getUI().getPage().setLocation("http://localhost:8080/indice");
+                }
+            });
+            menu.addComponents(correo, password, nombre, apellido);
+            menu.addComponent(guardar);
+            setContent(menu);
+        }
     }
 }

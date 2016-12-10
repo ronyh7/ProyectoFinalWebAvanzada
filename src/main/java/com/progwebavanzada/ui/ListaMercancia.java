@@ -40,6 +40,8 @@ public class ListaMercancia extends UI {
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+            if(!usuarioLogueado.isAdmin() || !usuarioLogueado.isInventario())
+                getUI().getPage().setLocation("http://localhost:8080/indice");
         }
         Collection<Mercancia> mercancias = mercanciaServices.allMercancias();
         BeanItemContainer<Mercancia> container =

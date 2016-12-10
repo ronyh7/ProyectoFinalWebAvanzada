@@ -42,6 +42,8 @@ public class EditarMercancia extends UI{
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+            if(!usuarioLogueado.isAdmin() || !usuarioLogueado.isInventario())
+                getUI().getPage().setLocation("http://localhost:8080/indice");
         }
         mercanciaID = Integer.parseInt(vaadinRequest.getParameter("id"));
         Mercancia mercancia = mercanciaServices.mercanciaID(mercanciaID);

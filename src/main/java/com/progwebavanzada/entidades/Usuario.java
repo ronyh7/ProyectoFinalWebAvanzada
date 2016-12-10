@@ -35,6 +35,16 @@ public class Usuario implements Serializable {
     @OneToOne
     private Factura carritoActual;
 
+    @Transient
+    private boolean Admin;
+
+    @Transient
+    private boolean Inventario;
+
+    @Transient
+    private boolean Ventas;
+
+
 
     public int getId() {
         return id;
@@ -114,5 +124,36 @@ public class Usuario implements Serializable {
 
     public void setCarritoActual(Factura carritoActual) {
         this.carritoActual = carritoActual;
+    }
+
+    public boolean isAdmin() {
+        if(roles.toString().contains("ADMIN")){
+            return true;
+        }
+        return false;
+    }
+
+    public void setAdmin(boolean admin) {
+        Admin = admin;
+    }
+
+    public boolean isInventario() {
+        if(roles.toString().contains("INVENTARIO"))
+            return true;
+        return false;
+    }
+
+    public void setInventario(boolean inventario) {
+        Inventario = inventario;
+    }
+
+    public boolean isVentas() {
+        if(roles.toString().contains("VENTAS"))
+            return true;
+        return false;
+    }
+
+    public void setVentas(boolean ventas) {
+        Ventas = ventas;
     }
 }
