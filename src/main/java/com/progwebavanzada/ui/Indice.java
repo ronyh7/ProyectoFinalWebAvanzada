@@ -7,6 +7,7 @@ import com.progwebavanzada.entidades.Usuario;
 import com.progwebavanzada.servicios.CompraServices;
 import com.progwebavanzada.servicios.FacturaServices;
 import com.progwebavanzada.servicios.MercanciaServices;
+import com.progwebavanzada.ui.formularios.InfoMercancia;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.ContextClickEvent;
@@ -30,6 +31,8 @@ public class Indice extends UI {
     @Autowired
     private Menu menu;
 
+    private InfoMercancia infoMercancia;
+
     @Autowired
     private MercanciaServices mercanciaServices;
 
@@ -40,6 +43,9 @@ public class Indice extends UI {
     private FacturaServices facturaServices;
 
     private Usuario usuarioLogueado;
+
+    HorizontalLayout listaMercancias;
+
 
     TextField cantidad = new TextField("cantidad");
     Button carrito = new Button("Agregar al Carrito");
@@ -53,19 +59,31 @@ public class Indice extends UI {
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
         }
-        HorizontalLayout comprar= new HorizontalLayout();
-        comprar.addComponents(cantidad,carrito);
-        comprar.setVisible(false);
         Collection<Mercancia> mercancias = mercanciaServices.allMercancias();
         BeanItemContainer<Mercancia> container =
                 new BeanItemContainer<Mercancia>(Mercancia.class, mercancias);
         Grid grid = new Grid(container);
-        grid.setWidth("50%");
+        grid.setWidth("100%");
+        grid.removeColumn("id");
+        grid.removeColumn("rutaImagen");
+        infoMercancia = new InfoMercancia();
+
+        listaMercancias=new HorizontalLayout();
+        listaMercancias.addComponent(infoMercancia);
+        VerticalLayout comprar = new VerticalLayout();
+        comprar.addComponents(cantidad,carrito);
+        comprar.setComponentAlignment(cantidad,Alignment.TOP_CENTER);
+        comprar.setComponentAlignment(carrito,Alignment.TOP_CENTER);
+        listaMercancias.addComponents(grid);
+        comprar.setVisible(false);
 
         grid.addSelectionListener(new SelectionEvent.SelectionListener() {
             @Override
             public void select(SelectionEvent event) {
+                listaMercancias.removeComponent(infoMercancia);
                 comprar.setVisible(true);
+                infoMercancia=new InfoMercancia((Mercancia)grid.getSelectedRow());
+                listaMercancias.addComponents(infoMercancia,comprar);
             }
         });
 
@@ -85,12 +103,10 @@ public class Indice extends UI {
                     compra.setFactura(usuarioLogueado.getCarritoActual());
                     compraServices.crearCompra(compra);
                 }
-                comprar.setVisible(false);
+                //comprar.setVisible(false);
             }
         });
-
-        menu.addComponent(grid);
-        menu.addComponent(comprar);
+        menu.addComponent(listaMercancias);
         setContent(menu);
     }
 }

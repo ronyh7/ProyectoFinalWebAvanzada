@@ -32,7 +32,7 @@ public class Login extends UI {
         absoluteLayout.setHeight("500px");
         TextField correo = new TextField("Correo");
         TextField password=new TextField("Password");
-        correo.setValue("admin@admin.com");
+        correo.setValue("rony.hernandez.809@gmail.com");
         password.setValue("admin");
 
         Label nombreC = new Label("Si desea cambiar el nombre o correo utilizado en la sesion anterior, puede hacerlo ahora");

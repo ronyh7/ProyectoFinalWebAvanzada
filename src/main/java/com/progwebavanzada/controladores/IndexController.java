@@ -3,6 +3,7 @@ package com.progwebavanzada.controladores;
 import com.progwebavanzada.entidades.Compra;
 import com.progwebavanzada.entidades.Factura;
 import com.progwebavanzada.entidades.Mercancia;
+import com.progwebavanzada.servicios.EmailServices;
 import com.progwebavanzada.servicios.FacturaServices;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -33,6 +34,9 @@ public class IndexController {
     @Autowired
     FacturaServices facturaServices;
 
+    @Autowired
+    EmailServices emailServices;
+
     @RequestMapping("/")
     public String login(){
         return "redirect:/login";
@@ -49,11 +53,13 @@ public class IndexController {
         Compra compra = factura.getMercancias().get(0);
         System.out.println("COMPRA: "+compra.toString());
 
+
         JRBeanCollectionDataSource collection = new JRBeanCollectionDataSource(factura.getMercancias());
 
         JasperPrint jasperPrint = getObjectPdf("TestReport.jrxml", new HashMap<String, Object>(), collection);
 
-        sendPdfResponse(response, jasperPrint, "Factura-" + id);
+        //sendPdfResponse(response, jasperPrint, "Factura-" + id);
+        sendPdfEmail(response,jasperPrint,"Factura-"+id);
     }
 
     public JasperPrint getObjectPdf(String path, Map<String, Object> parameters, JRDataSource dataSource) {
@@ -101,6 +107,33 @@ public class IndexController {
         try {
             response.getOutputStream().write(data);
             response.getOutputStream().flush();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void sendPdfEmail(HttpServletResponse response, JasperPrint jasperPrint, String fileName){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try {
+            JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+        } catch (JRException e1) {
+            e1.printStackTrace();
+        }
+
+        byte[] data = out.toByteArray();
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".pdf");
+        response.setContentLength(data.length);
+
+        try {
+            response.getOutputStream().write(data);
+            String correo="palomoUnDosTres@gmail.com";
+            String correo2="rony.hernandez.809@gmail.com";
+            emailServices.sendMail(correo,correo2,"Prueba","Factura",fileName, data);
+
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

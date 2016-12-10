@@ -5,16 +5,25 @@ import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.type.WhenNoDataTypeEnum;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.MailParseException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -23,76 +32,58 @@ import java.util.Map;
 /**
  * Created by rony- on 11/27/2016.
  */
-@Component
+@Service
 public class EmailServices {
 
 
     @Autowired
     UsuarioServices usuarioServices;
 
+
+    private MailSender mailSenderr;
     @Autowired
-    private MailSender mailSender;
+    private JavaMailSender mailSender;
 
 
-    public JasperPrint getObjectPdf(String path, Map<String, Object> parameters, JRDataSource dataSource) {
-        JasperPrint jasperPrint = null;
-
-        InputStream inStream = null;
+    public void sendMail(String from, String to, String subject, String msg, String filename, byte[] output) throws IOException {
+        MimeMessage message = mailSender.createMimeMessage();
         try {
-            inStream = getClass().getClassLoader().getResourceAsStream(path);
-            JasperDesign jasperDesign = JRXmlLoader.load(inStream);
-            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
-            jasperReport.setWhenNoDataType(WhenNoDataTypeEnum.ALL_SECTIONS_NO_DETAIL);
-            jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-        } catch (JRException jre) {
-            System.out.println("Error creando el PDF");
-        } finally {
-            if (inStream != null) {
-                try {
-                    inStream.close();
-                } catch (IOException e) {
-                    System.out.println("Error cerrando stream");
-                }
-            }
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setFrom(from);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(msg);
+            helper.addAttachment(filename+".pdf",new ByteArrayResource(output));
+        }catch (MessagingException e) {
+            throw new MailParseException(e);
         }
-
-        return jasperPrint;
-    }
-
-    public static void sendPdfResponse(HttpServletResponse response, JasperPrint jasperPrint, String fileName){
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        try {
-            JasperExportManager.exportReportToPdfStream(jasperPrint, out);
-        } catch (JRException e1) {
-            e1.printStackTrace();
-        }
-
-        byte[] data = out.toByteArray();
-
-        response.setContentType("application/pdf");
-        //To make it a download change "inline" to "attachment"
-        response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".pdf");
-        response.setContentLength(data.length);
-
-        try {
-            response.getOutputStream().write(data);
-            response.getOutputStream().flush();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-    public void sendMail(String from, String to, String subject, String msg) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(from);
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(msg);
         mailSender.send(message);
     }
 
-    public void setMailSender(MailSender mailSender) {
+
+    /*public void sendMail(String dear, String content) {
+
+        MimeMessage message = mailSender.createMimeMessage();
+
+        try{
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setFrom(simpleMailMessage.getFrom());
+            helper.setTo(simpleMailMessage.getTo());
+            helper.setSubject(simpleMailMessage.getSubject());
+            helper.setText(String.format(
+                    simpleMailMessage.getText(), dear, content));
+
+            FileSystemResource file = new FileSystemResource("C:\\log.txt");
+            helper.addAttachment(file.getFilename(), file);
+
+        }catch (MessagingException e) {
+            throw new MailParseException(e);
+        }
+        mailSender.send(message);
+    }*/
+
+    /*public void setMailSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
-    }
+    }*/
 }

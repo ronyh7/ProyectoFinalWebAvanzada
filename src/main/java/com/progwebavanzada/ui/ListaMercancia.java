@@ -39,13 +39,11 @@ public class ListaMercancia extends UI {
         Grid grid = new Grid(container);
         grid.setWidth("100%");
 
-
         editar.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 Mercancia mercancia= (Mercancia) grid.getSelectedRow();
                 getUI().getPage().setLocation("http://localhost:8080/editarMercancia?id="+mercancia.getId());
-
             }
         });
         borrar.addClickListener(new Button.ClickListener() {
