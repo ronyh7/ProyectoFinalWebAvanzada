@@ -132,7 +132,7 @@ public class IndexController {
             response.getOutputStream().write(data);
             String correo="palomoUnDosTres@gmail.com";
             String correo2="rony.hernandez.809@gmail.com";
-            emailServices.sendMail(correo,correo2,"Prueba","Factura",fileName, data);
+            emailServices.sendMailPdf(correo,correo2,"Prueba","Factura",fileName, data);
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

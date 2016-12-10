@@ -45,7 +45,7 @@ public class EmailServices {
     private JavaMailSender mailSender;
 
 
-    public void sendMail(String from, String to, String subject, String msg, String filename, byte[] output) throws IOException {
+    public void sendMailPdf(String from, String to, String subject, String msg, String filename, byte[] output) throws IOException {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -59,6 +59,16 @@ public class EmailServices {
         }
         mailSender.send(message);
     }
+
+    public void sendMailCliente(String from,String to, String subject, String msg){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(msg);
+        mailSender.send(message);
+    }
+
 
 
     /*public void sendMail(String dear, String content) {

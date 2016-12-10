@@ -39,7 +39,7 @@ public class Login extends UI {
         correo.addValidator(new EmailValidator("debe ser un correo valido"));
         if(usuarioService.allUsuarios().size() <= 0){
             Usuario usuario = new Usuario();
-            usuario.setCorreo("admin@admin.com");
+            usuario.setCorreo("rony.hernandez.809@gmail.com");
             usuario.setPassword("admin");
             usuario.setNombre("Admin");
             usuario.setApellido("Administrador");
