@@ -1,6 +1,7 @@
 package com.progwebavanzada.ui.formularios;
 
 import com.progwebavanzada.entidades.Mercancia;
+import com.progwebavanzada.entidades.Usuario;
 import com.progwebavanzada.servicios.MercanciaServices;
 import com.progwebavanzada.ui.Menu;
 import com.vaadin.annotations.Theme;
@@ -28,12 +29,20 @@ public class EditarMercancia extends UI{
     private Menu menu;
 
     private int mercanciaID;
+
+    private Usuario usuarioLogueado;
     //Upload Images TO DO
     private Button guardar = new Button("Guardar Cambios");
 
     @Override
     protected void init(VaadinRequest vaadinRequest){
         menu.setPagina(this);
+        if(getSession().getAttribute("usuario")==null){
+            getUI().getPage().setLocation("http://localhost:8080/login");
+        }
+        else{
+            usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+        }
         mercanciaID = Integer.parseInt(vaadinRequest.getParameter("id"));
         Mercancia mercancia = mercanciaServices.mercanciaID(mercanciaID);
         nombre.setValue(mercancia.getNombre());

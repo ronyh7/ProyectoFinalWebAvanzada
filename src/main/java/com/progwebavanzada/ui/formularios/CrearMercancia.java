@@ -1,6 +1,7 @@
 package com.progwebavanzada.ui.formularios;
 
 import com.progwebavanzada.entidades.Mercancia;
+import com.progwebavanzada.entidades.Usuario;
 import com.progwebavanzada.servicios.MercanciaServices;
 import com.progwebavanzada.ui.Menu;
 import com.progwebavanzada.utilidad.ImageUploader;
@@ -36,12 +37,20 @@ public class CrearMercancia extends UI {
     @Autowired
     private Menu menu;
 
+    private Usuario usuarioLogueado;
+
     Embedded image = new Embedded("Imagen Subida");
     private Button guardar = new Button("guardar");
 
     @Override
     protected void init(VaadinRequest vaadinRequest){
         menu.setPagina(this);
+        if(getSession().getAttribute("usuario")==null){
+            getUI().getPage().setLocation("http://localhost:8080/login");
+        }
+        else{
+            usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+        }
         ImageUploader receiver = new ImageUploader(image);
 
 // Create the upload with a caption and set receiver later

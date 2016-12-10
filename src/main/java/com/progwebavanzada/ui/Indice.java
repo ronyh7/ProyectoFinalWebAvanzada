@@ -102,6 +102,7 @@ public class Indice extends UI {
                     }
                     compra.setFactura(usuarioLogueado.getCarritoActual());
                     compraServices.crearCompra(compra);
+                    listaMercancias.setVisible(false);
                 }
                 //comprar.setVisible(false);
             }

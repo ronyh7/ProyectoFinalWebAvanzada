@@ -30,12 +30,20 @@ public class ListaUsuario extends UI {
     @Autowired
     private Menu menu;
 
+    private Usuario usuarioLogueado;
+
     private Button editar = new Button("Editar Usuario");
     private Button borrar = new Button("Borrar Usuario");
 
     @Override
     protected void init(VaadinRequest vaadinRequest){
         menu.setPagina(this);
+        if(getSession().getAttribute("usuario")==null){
+            getUI().getPage().setLocation("http://localhost:8080/login");
+        }
+        else{
+            usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
+        }
         Collection<Usuario> usuarios = usuarioServices.allUsuarios();
 
         BeanItemContainer<Usuario> container =
