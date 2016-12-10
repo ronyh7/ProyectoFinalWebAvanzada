@@ -50,7 +50,7 @@ public class CrearMercancia extends UI {
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
-            if(!usuarioLogueado.isAdmin() || !usuarioLogueado.isInventario())
+            if(!usuarioLogueado.isAdmin() && !usuarioLogueado.isInventario())
                 getUI().getPage().setLocation("http://localhost:8080/indice");
         }
         ImageUploader receiver = new ImageUploader(image);

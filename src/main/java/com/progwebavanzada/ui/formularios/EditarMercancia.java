@@ -5,6 +5,7 @@ import com.progwebavanzada.entidades.Usuario;
 import com.progwebavanzada.servicios.MercanciaServices;
 import com.progwebavanzada.ui.Menu;
 import com.vaadin.annotations.Theme;
+import com.vaadin.data.validator.FloatRangeValidator;
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -25,6 +26,7 @@ public class EditarMercancia extends UI{
     private TextField nombre=new TextField("Nombre");
     private TextField descripcion=new TextField("Descripcion");
     private TextField cantidad = new TextField("Cantidad");
+    private TextField precio = new TextField("Precio");
     @Autowired
     private Menu menu;
 
@@ -42,7 +44,7 @@ public class EditarMercancia extends UI{
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
-            if(!usuarioLogueado.isAdmin() || !usuarioLogueado.isInventario())
+            if(!usuarioLogueado.isAdmin() && !usuarioLogueado.isInventario())
                 getUI().getPage().setLocation("http://localhost:8080/indice");
         }
         mercanciaID = Integer.parseInt(vaadinRequest.getParameter("id"));
@@ -51,6 +53,9 @@ public class EditarMercancia extends UI{
         descripcion.setValue(mercancia.getDescripcion());
         cantidad.setValue(mercancia.getCantidad()+"");
         cantidad.addValidator( new IntegerRangeValidator("tiene que ser un numero entero de 1 a 1000",1,1000));
+        precio.setValue(mercancia.getPrecio()+"");
+        precio.addValidator(new FloatRangeValidator("tiene que ser un numero",1.0f,10000000.0f));
+
 
         guardar.addClickListener(new Button.ClickListener() {
             @Override
@@ -58,15 +63,17 @@ public class EditarMercancia extends UI{
                 Mercancia mercanciaNueva = new Mercancia();
                 mercanciaNueva.setId(mercanciaID);
                 mercanciaNueva.setNombre(nombre.getValue());
+                mercanciaNueva.setPrecio(Float.parseFloat(precio.getValue()));
                 mercanciaNueva.setDescripcion(descripcion.getValue());
                 mercanciaNueva.setCantidad(Integer.parseInt(cantidad.getValue()));
+                mercanciaNueva.setRutaImagen(mercancia.getRutaImagen());
                 mercanciaServices.crearMercancia(mercanciaNueva);
                 getUI().getPage().setLocation("http://localhost:8080/indice");
 
             }
         });
 
-        menu.addComponents(nombre,descripcion,cantidad,guardar);
+        menu.addComponents(nombre,descripcion,cantidad,precio,guardar);
         setContent(menu);
     }
 }

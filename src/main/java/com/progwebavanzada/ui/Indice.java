@@ -63,17 +63,18 @@ public class Indice extends UI {
         BeanItemContainer<Mercancia> container =
                 new BeanItemContainer<Mercancia>(Mercancia.class, mercancias);
         Grid grid = new Grid(container);
-        grid.setWidth("100%");
         grid.removeColumn("id");
         grid.removeColumn("rutaImagen");
         infoMercancia = new InfoMercancia();
 
         listaMercancias=new HorizontalLayout();
         listaMercancias.addComponent(infoMercancia);
+
         VerticalLayout comprar = new VerticalLayout();
         comprar.addComponents(cantidad,carrito);
         comprar.setComponentAlignment(cantidad,Alignment.TOP_CENTER);
         comprar.setComponentAlignment(carrito,Alignment.TOP_CENTER);
+
         listaMercancias.addComponents(grid);
         comprar.setVisible(false);
 
@@ -102,11 +103,13 @@ public class Indice extends UI {
                     }
                     compra.setFactura(usuarioLogueado.getCarritoActual());
                     compraServices.crearCompra(compra);
-                    listaMercancias.setVisible(false);
+                    infoMercancia.setVisible(false);
+                    comprar.setVisible(false);
                 }
                 //comprar.setVisible(false);
             }
         });
+        listaMercancias.setComponentAlignment(grid,Alignment.TOP_LEFT);
         menu.addComponent(listaMercancias);
         setContent(menu);
     }

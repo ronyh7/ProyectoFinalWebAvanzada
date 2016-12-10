@@ -52,7 +52,7 @@ public class CrearUsuario extends UI {
         }
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
-            if(!usuarioLogueado.isAdmin() || !usuarioLogueado.isVentas())
+            if(!usuarioLogueado.isAdmin() && !usuarioLogueado.isVentas())
                 getUI().getPage().setLocation("http://localhost:8080/indice");
         }
         correo.addValidator(new EmailValidator("Debe ser un Email valido"));

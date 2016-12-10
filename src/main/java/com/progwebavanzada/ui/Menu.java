@@ -97,6 +97,7 @@ public class Menu extends VerticalLayout {
         MenuBar.MenuItem logout = menuBar.addItem("Cerrar Sesion",logoutC);
 
         addComponent(menuBar);
+        setDefaultComponentAlignment(Alignment.TOP_CENTER);
 
     }
 

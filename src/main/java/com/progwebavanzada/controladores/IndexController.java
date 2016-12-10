@@ -3,8 +3,10 @@ package com.progwebavanzada.controladores;
 import com.progwebavanzada.entidades.Compra;
 import com.progwebavanzada.entidades.Factura;
 import com.progwebavanzada.entidades.Mercancia;
+import com.progwebavanzada.entidades.Usuario;
 import com.progwebavanzada.servicios.EmailServices;
 import com.progwebavanzada.servicios.FacturaServices;
+import com.progwebavanzada.servicios.UsuarioServices;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.design.JasperDesign;
@@ -37,29 +39,47 @@ public class IndexController {
     @Autowired
     EmailServices emailServices;
 
+    @Autowired
+    UsuarioServices usuarioServices;
+
     @RequestMapping("/")
     public String login(){
         return "redirect:/login";
     }
 
-    @RequestMapping(value="/report",method = { RequestMethod.GET })
+    @RequestMapping(value="/report")
     public void getReport(HttpServletResponse response, @RequestParam(value = "id") int id){
-        Factura factura = facturaServices.facturaID(id);
-        System.out.println("FACTURA: ");
-        System.out.println("ID: "+factura.getId());
-        System.out.println("DATE: "+factura.getFecha());
-        System.out.println("USUARIO: "+factura.getCliente().getCorreo());
-        System.out.println("TOTAL: "+factura.getTotal());
-        Compra compra = factura.getMercancias().get(0);
-        System.out.println("COMPRA: "+compra.toString());
 
+        Factura factura = facturaServices.facturaID(id);
+        Usuario usuario = new Usuario();
+        List<Usuario> usuarios = usuarioServices.allUsuarios();
+        for(int i=0;i< usuarios.size();i++){
+            if(usuarios.get(i).isInventario()){
+                usuario = usuarios.get(i);
+                break;
+            }
+        }
+
+        JRBeanCollectionDataSource collection = new JRBeanCollectionDataSource(factura.getMercancias());
+
+        JasperPrint jasperPrint = getObjectPdf("TestReport.jrxml", new HashMap<String, Object>(), collection);
+        System.out.println("usuario a recibir:"+ usuario.getCorreo());
+
+        sendPdfEmail(response, jasperPrint, "Factura-" + id,usuario.getCorreo());
+
+    }
+
+    @RequestMapping(value = "/descargar")
+    public String factura(HttpServletResponse response, @RequestParam(value = "id") int id){
+        Factura factura = facturaServices.facturaID(id);
 
         JRBeanCollectionDataSource collection = new JRBeanCollectionDataSource(factura.getMercancias());
 
         JasperPrint jasperPrint = getObjectPdf("TestReport.jrxml", new HashMap<String, Object>(), collection);
 
-        //sendPdfResponse(response, jasperPrint, "Factura-" + id);
-        sendPdfEmail(response,jasperPrint,"Factura-"+id);
+        downloadPdf(response, jasperPrint, "Factura-" + id);
+
+        return "redirect:/indice";
     }
 
     public JasperPrint getObjectPdf(String path, Map<String, Object> parameters, JRDataSource dataSource) {
@@ -67,7 +87,6 @@ public class IndexController {
 
         InputStream inStream = null;
         try {
-            System.out.println("PATH: "+getClass().getClassLoader());
             inStream = getClass().getClassLoader().getResourceAsStream(path);
             JasperDesign jasperDesign = JRXmlLoader.load(inStream);
             JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
@@ -84,11 +103,10 @@ public class IndexController {
                 }
             }
         }
-
         return jasperPrint;
     }
 
-    public static void sendPdfResponse(HttpServletResponse response, JasperPrint jasperPrint, String fileName){
+    public static void downloadPdf(HttpServletResponse response, JasperPrint jasperPrint, String fileName){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
@@ -100,7 +118,6 @@ public class IndexController {
         byte[] data = out.toByteArray();
 
         response.setContentType("application/pdf");
-        //To make it a download change "inline" to "attachment"
         response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".pdf");
         response.setContentLength(data.length);
 
@@ -113,7 +130,7 @@ public class IndexController {
         }
     }
 
-    public void sendPdfEmail(HttpServletResponse response, JasperPrint jasperPrint, String fileName){
+    public void sendPdfEmail(HttpServletResponse response, JasperPrint jasperPrint, String fileName,String correoRecibir){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         try {
@@ -131,8 +148,7 @@ public class IndexController {
         try {
             response.getOutputStream().write(data);
             String correo="palomoUnDosTres@gmail.com";
-            String correo2="rony.hernandez.809@gmail.com";
-            emailServices.sendMailPdf(correo,correo2,"Prueba","Factura",fileName, data);
+            emailServices.sendMailPdf(correo,correoRecibir,"Prueba","Factura",fileName, data);
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

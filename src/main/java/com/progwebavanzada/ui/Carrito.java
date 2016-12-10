@@ -12,9 +12,7 @@ import com.vaadin.annotations.Theme;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Grid;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -46,7 +44,12 @@ public class Carrito extends UI {
 
     private Factura nuevaFactura= new Factura();
 
+    private boolean inventarioExistente=true;
+
+    private float total=0;
+
     Button comprar = new Button("comprar");
+    TextField totalFactura = new TextField("Total");
 
     @Override
     protected void init(VaadinRequest vaadinRequest){
@@ -58,6 +61,9 @@ public class Carrito extends UI {
         else{
             usuarioLogueado=(Usuario)getSession().getAttribute("usuario");
             usuarioExiste=true;
+            if(usuarioLogueado.isVentas() || usuarioLogueado.isInventario()){
+                getUI().getPage().setLocation("http://localhost:8080/indice");
+            }
         }
         if(usuarioExiste) {
             Usuario usuario = usuarioServices.crearUsuario(usuarioLogueado);
@@ -71,30 +77,31 @@ public class Carrito extends UI {
             grid.setWidth("100%");
             grid.removeColumn("factura");
             grid.removeColumn("id");
+            for (int i = 0; i < compras.size(); i++) {
+                if (compras.get(i).getCantidad() <= compras.get(i).getMercancia().getCantidad()) {
+                    int resta = compras.get(i).getMercancia().getCantidad() - compras.get(i).getCantidad();
+                    compras.get(i).getMercancia().setCantidad(resta);
+                    total += compras.get(i).getCantidad() * compras.get(i).getMercancia().getPrecio();
+                    mercanciaServices.crearMercancia(compras.get(i).getMercancia());
+                } else {
+                    inventarioExistente= false;
+                    break;
+                }
+            }
+            totalFactura.setValue(total+"");
+            totalFactura.setReadOnly(true);
 
             comprar.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    boolean compraCompletada = true;
-                    for (int i = 0; i < compras.size(); i++) {
-                        if (compras.get(i).getCantidad() <= compras.get(i).getMercancia().getCantidad()) {
-                            int resta = compras.get(i).getMercancia().getCantidad() - compras.get(i).getCantidad();
-                            compras.get(i).getMercancia().setCantidad(resta);
-                            mercanciaServices.crearMercancia(compras.get(i).getMercancia());
-                        } else {
-                            compraCompletada = false;
-                            break;
-                        }
-                    }
-                    if (compraCompletada) {
+                    if (inventarioExistente) {
                         nuevaFactura.setFacturada(true);
                         nuevaFactura.setCliente(usuario);
                         nuevaFactura.setFecha(new Date());
                         facturaServices.crearFactura(nuevaFactura);
-                        float total = 1;
+
                         for (int i = 0; i < compras.size(); i++) {
                             compras.get(i).setFactura(nuevaFactura);
-                            total += compras.get(i).getCantidad() * compras.get(i).getMercancia().getPrecio();
                             compraServices.crearCompra(compras.get(i));
                         }
                         nuevaFactura.setTotal(total);
@@ -105,14 +112,13 @@ public class Carrito extends UI {
                         getSession().setAttribute("usuario", usuario);
                         facturaServices.borrarFactura(facturavieja);
 
-                        getUI().getPage().setLocation("http://localhost:8080/report?id=" + nuevaFactura.getId());
+                        getUI().getPage().setLocation("http://localhost:8080/compra?id=" + nuevaFactura.getId());
                     }
                 }
             });
-
-
             menu.addComponent(grid);
             menu.addComponent(comprar);
+            menu.addComponent(totalFactura);
             setContent(menu);
         }
     }
