@@ -65,6 +65,13 @@ public class Menu extends VerticalLayout {
             }
         };
 
+        MenuBar.Command listaFacturas = new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getUI().getPage().setLocation("http://localhost:8080/listaFactura");
+            }
+        };
+
         MenuBar.Command carritoC = new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
@@ -91,6 +98,9 @@ public class Menu extends VerticalLayout {
 
         MenuBar.MenuItem crearMercancia = mercancias.addItem("Crear Mercancia",crearMercanciaC );
         MenuBar.MenuItem listaMercancia = mercancias.addItem("Lista de Mercancias",listaMercanciaC);
+
+        MenuBar.MenuItem facturas = menuBar.addItem("Facturas",null);
+        MenuBar.MenuItem facturasPendientes = facturas.addItem("Facturas Pendientes",listaFacturas);
 
         MenuBar.MenuItem carrito = menuBar.addItem("Carrito",carritoC);
 

@@ -24,6 +24,8 @@ public class Factura implements Serializable {
 
     private float total;
 
+    private boolean entregada;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "factura")
     private List<Compra> mercancias;
 
@@ -79,5 +81,13 @@ public class Factura implements Serializable {
 
     public void setTotal(float total) {
         this.total = total;
+    }
+
+    public boolean isEntregada() {
+        return entregada;
+    }
+
+    public void setEntregada(boolean entregada) {
+        this.entregada = entregada;
     }
 }

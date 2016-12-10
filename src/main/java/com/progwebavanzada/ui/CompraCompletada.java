@@ -45,7 +45,7 @@ public class CompraCompletada extends UI {
         menu.setPagina(this);
         int id=Integer.parseInt(vaadinRequest.getParameter("id"));
         factura = facturaServices.facturaID(id);
-        //getUI().getPage().setLocation("http://localhost:8080/report?id=" + id);
+        getUI().getPage().setLocation("http://localhost:8080/report?id=" + id);
 
         compra.setStyleName("h1");
         Panel panel = new Panel();

@@ -53,7 +53,11 @@ public class ListaUsuario extends UI {
                 new BeanItemContainer<Usuario>(Usuario.class, usuarios);
         Grid grid = new Grid(container);
         grid.setWidth("100%");
-
+        grid.removeColumn("carritoActual");
+        grid.removeColumn("admin");
+        grid.removeColumn("inventario");
+        grid.removeColumn("ventas");
+        grid.removeColumn("facturas");
 
         editar.addClickListener(new Button.ClickListener() {
             @Override

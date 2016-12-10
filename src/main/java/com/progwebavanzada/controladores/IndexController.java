@@ -66,11 +66,10 @@ public class IndexController {
         System.out.println("usuario a recibir:"+ usuario.getCorreo());
 
         sendPdfEmail(response, jasperPrint, "Factura-" + id,usuario.getCorreo());
-
     }
 
     @RequestMapping(value = "/descargar")
-    public String factura(HttpServletResponse response, @RequestParam(value = "id") int id){
+    public void factura(HttpServletResponse response, @RequestParam(value = "id") int id){
         Factura factura = facturaServices.facturaID(id);
 
         JRBeanCollectionDataSource collection = new JRBeanCollectionDataSource(factura.getMercancias());
@@ -79,7 +78,7 @@ public class IndexController {
 
         downloadPdf(response, jasperPrint, "Factura-" + id);
 
-        return "redirect:/indice";
+        ///return "redirect:/indice";
     }
 
     public JasperPrint getObjectPdf(String path, Map<String, Object> parameters, JRDataSource dataSource) {
@@ -145,10 +144,11 @@ public class IndexController {
         response.setHeader("Content-disposition", "attachment; filename=" + fileName + ".pdf");
         response.setContentLength(data.length);
 
+
         try {
             response.getOutputStream().write(data);
             String correo="palomoUnDosTres@gmail.com";
-            emailServices.sendMailPdf(correo,correoRecibir,"Prueba","Factura",fileName, data);
+            emailServices.sendMailPdf(correo,correoRecibir,"Sistema De Compras","Factura",fileName, data);
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
